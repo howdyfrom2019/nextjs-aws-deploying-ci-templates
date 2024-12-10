@@ -1,0 +1,40 @@
+name: Deploy NextJS App with AWS EC2 CI/CD
+
+on:
+  push:
+    branches:
+      - dev
+      - prod
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/set-up-node@v3
+        with:
+          node-version: 22
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Copy project to EC2
+        env:
+          EC2_IP: ${{ secrets.EC2_IP }}
+          SSH_KEY: ${{ secrets.EC2_SSH_KEY }}
+        run: |
+          echo "${SSH_KEY}" > ssh_key.pem
+          chmod 600 ssh_key.pem
+          scp -i ssh_key.pem -r ./* ec2-user@${EC2_IP}:~/app/
+
+      - name: Execute deploy script on EC2
+        env:
+          EC2_IP: ${{ secrets.EC2_IP }}
+          SSH_KEY: ${{ secrets.EC2_SSH_KEY }}
+          BRANCH_NAME: ${{ github.ref_name }}
+        run: |
+          ssh -i ssh_key.pem ec2-user@${EC2_IP} "bash ~/scripts/deploy.sh $BRANCH_NAME"
