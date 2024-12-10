@@ -29,7 +29,7 @@ jobs:
         run: |
           echo "${SSH_KEY}" > ssh_key.pem
           chmod 600 ssh_key.pem
-          scp -i ssh_key.pem -r ./* ec2-user@${EC2_IP}:~/app/
+          scp -i ssh_key.pem -r ./* ubuntu@${EC2_IP}:~/app/
 
       - name: Execute deploy script on EC2
         env:
@@ -37,4 +37,4 @@ jobs:
           SSH_KEY: ${{ secrets.EC2_SSH_KEY }}
           BRANCH_NAME: ${{ github.ref_name }}
         run: |
-          ssh -i ssh_key.pem ec2-user@${EC2_IP} "bash ~/scripts/deploy.sh $BRANCH_NAME"
+          ssh -i ssh_key.pem ubuntu@${EC2_IP} "bash ~/scripts/deploy.sh $BRANCH_NAME"
