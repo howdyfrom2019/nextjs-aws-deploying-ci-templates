@@ -25,8 +25,9 @@ npm install
 
 echo "Building application..."
 npm run build
+pm2 delete "next-${BRANCH_NAME}" || true
 
 echo "Starting application with PM2.."
-pm2 start npm --name "nextjs" -- start -- -p $([ "$BRANCH" == "prod" ] && echo 3000 || echo 3001)
+pm2 start npm --name "next-${BRANCH_NAME}" -- start -- -p $([ "$BRANCH" == "prod" ] && echo 3000 || echo 3001)
 
 echo "Deployment completed!"
