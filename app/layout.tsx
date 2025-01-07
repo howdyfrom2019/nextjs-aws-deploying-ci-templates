@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils";
+import Providers from "@/providers";
 import { GeistMono } from "geist/font/mono";
 import { GeistSans } from "geist/font/sans";
 import type { Metadata } from "next";
@@ -23,7 +24,7 @@ export default function RootLayout({
           "antialiased font-sans",
         ])}
       >
-        {children}
+        <Providers>{children}</Providers>
       </body>
     </html>
   );
